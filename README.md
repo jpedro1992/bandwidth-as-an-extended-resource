@@ -13,7 +13,7 @@ The goal is to advertise bandwidth resources as **extended resources** to allow 
 
 `./script.sh enp1s0f0 127.0.0.1:8001`
 
-# Script for outside (Authentication required)
+# Script for outside (Authentication is required)
 
 `./scriptWithAuthentication.sh enp1s0f0 10.2.0.113:6443`
 
