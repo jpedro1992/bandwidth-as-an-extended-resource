@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bandwidth-demo
+  annotations:
+    kubernetes.io/ingress-bandwidth: 10M
+    kubernetes.io/egress-bandwidth: 10M
+spec:
+  containers:
+  - name: bandwidth-demo
+    image: nginx
+    resources:
+      requests:
+        network.aware.com/bandwidth: 10000
+      limits:
+        network.aware.com/bandwidth: 10000

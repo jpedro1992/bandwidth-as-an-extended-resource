@@ -1,0 +1,32 @@
+# Create kubernetes service account
+kubectl create serviceaccount external-svc
+
+# Create a service-account with relevant permissions
+kubectl create -f rbac.yaml
+
+# Get the service account 
+export secret=`kubectl get serviceaccount external-svc -o json | jq -Mr '.secrets[].name'`
+
+# Get the cluster CA certificate
+kubectl get secrets $secret -o json | jq -Mr '.data["ca.crt"]' | base64 -di > ca.crt
+
+# Get the secret token 
+export token=`kubectl get secrets $secret -o json | jq -Mr '.data.token' | base64 -di`
+
+# Let's find the cluster ip
+kubectl cluster-info
+
+# Get all jobs with new service account token 
+curl 'https://<cluster-ip>/apis/batch/v1/namespaces/default/jobs' --cacert ca.crt -H "Authorization: Bearer $token"
+
+# Example to patch node with bandwidth:
+
+curl --cacert ca.crt -H "Authorization: Bearer $token" --header "Content-Type: application/json-patch+json" --request PATCH --data '[{"op": "add", "path": "/status/capacity/network.aware.com~1bandwidth", "value": "1000000000"}]' https://10.2.0.113:6443/api/v1/nodes/<node-name>/status
+
+# Script for master node
+
+./script.sh enp1s0f0 127.0.0.1:8001 
+
+# Script for outside (Authentication required!)
+
+./scriptWithAuthentication.sh enp1s0f0 10.2.0.113:6443
