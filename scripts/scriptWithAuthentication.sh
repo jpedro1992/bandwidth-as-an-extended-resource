@@ -20,7 +20,7 @@ echo $TOKEN
 
 # Typically all values are in Mb/s
 value=$(cat /sys/class/net/${INTERFACE}/speed)
-speed=$(($value*100000))
+speed=$(($value*1000000))
 echo $speed
 
 # Add the Patch
